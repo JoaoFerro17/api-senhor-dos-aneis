@@ -18,8 +18,9 @@ app.get('/', (req, res) => {
     res.send('Bem-vindo à API de Personagens da Terra Média!');
 });
 
-app.get('/personagens', (req, res) => {
+app.get('/api/personagens', (req, res) => {
     const{raca} = req.query;
+    let resultado = personagens;
     if (raca) {
         resultado = resultado.filter(p => p.raca.toLowerCase() === raca.toLowerCase());
     }
