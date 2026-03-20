@@ -170,4 +170,8 @@ A API permite gerenciar os integrantes da Sociedade do Anel e outros personagens
 3. Localização Padrão (Default): Caso a localizacao não seja informada no JSON enviado, a API define automaticamente como "Terra-Média".
 4. Gerenciamento de Identificadores (ID): O servidor controla a geração de IDs de forma incremental (iniciando em 6 para novos recursos), garantindo que cada personagem tenha um ID único.
 
-
+## ⚙️ Como Rodar o Projeto
+1. Clone este repositório.
+2. No terminal, execute `npm install` para baixar as dependências.
+3. Inicie o servidor com `npm run dev`.
+4. A API estará disponível em: `http://localhost:3000`
