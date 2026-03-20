@@ -25,7 +25,7 @@ Bem-vindo à API de Personagens da Terra Média!
 ```
 ![boas-vindas](./imagens/teste_boas_vindas.png)
 
-### 🟢 GET `/`
+###  GET `/`
 * **Método:** `GET`
 * **URL:** `http://localhost:3000/api/personagens`
 * **Resposta (200 OK):**
