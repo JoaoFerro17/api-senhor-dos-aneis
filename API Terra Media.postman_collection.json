@@ -1,0 +1,42 @@
+{
+  "info": {
+    "_postman_id": "d4462709-3a54-4368-ad4e-a4637747284a",
+    "name": "API Terra Media",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53186698"
+  },
+  "item": [
+    {
+      "name": "New Request",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\"nome\":\"Saruman\",\r\n\"raca\":\"Istari\",\r\n\"classe\":\"Mago\",\r\n\"localizacao\":\"dois palmos debaixo da terra\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/personagens",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "personagens"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

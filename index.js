@@ -45,7 +45,7 @@ app.post('/api/personagens', (req, res) => {
         classe,
         localizacao
     };
-    personajes.push(novoPersonagem);
+    personagens.push(novoPersonagem);
     res.status(201).json(novoPersonagem);
 });
 
