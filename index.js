@@ -7,7 +7,7 @@ app.use(express.json());
 let personagens = [
     { id: 1, nome: "Frodo Bolseiro", raca: "Hobbit", classe: "Portador do Anel", localizacao: "Condado" },
     { id: 2, nome: "Gandalf", raca: "Mago", classe: "Istari", localizacao: "Variável" },
-    { id: 3, nome: "Aragorn", raca: "Humano", classe: "Guradião", localizacao: "Valfenda" },
+    { id: 3, nome: "Aragorn", raca: "Humano", classe: "Guardião", localizacao: "Valfenda" },
     { id: 4, nome: "Legolas", raca: "Elfo", classe: "Arqueiro", localizacao: "Floresta de Fangorn" },
     { id: 5, nome: "Gimli", raca: "Anão", classe: "Guerreiro", localizacao: "Moria" }
 ];
