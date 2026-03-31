@@ -8,11 +8,11 @@ A API permite gerenciar os integrantes da Sociedade do Anel e outros personagens
 
 | Funcionalidade | Método | URL | Descrição |
 | :--- | :--- | :--- | :--- |
-| Boas-vindas | `GET` | `/` | Retorna uma mensagem inicial da API. |
-| Listar/Filtrar | `GET` | `/api/personagens` | Lista todos os personagens ou filtra por raça. |
-| Criar Novo | `POST` | `/api/personagens` | Adiciona um novo personagem com validações. |
-
----
+| **Boas-vindas** | `GET` | `/` | Retorna uma mensagem inicial da API. |
+| **Listar/Filtrar** | `GET` | `/api/personagens` | Lista todos os personagens ou filtra por raça. |
+| **Criar Novo** | `POST` | `/api/personagens` | Adiciona um novo personagem com validações. |
+| **Atualizar** | `PUT` | `/api/personagens/:id` | Atualiza os dados de um personagem existente. |
+| **Remover** | `DELETE` | `/api/personagens/:id` | Remove um personagem permanentemente. |
 
 ##  2. Detalhamento dos Endpoints
 
@@ -163,12 +163,40 @@ Bem-vindo à API de Personagens da Terra Média!
 ### Filtro por Raça
 ![filtro por raça](./imagens/filtro_por_raca.png)
 
+### PUT `/api/personagens/:id`
+* **Método:** `PUT`
+* **URL:** `http://localhost:3000/api/personagens/:id`
+* * **Resposta (200 OK):** Objeto atualizado.
+```json
+{
+  "id": 10,
+  "nome": "Sam",
+  "raca": "Hobbit",
+  "classe": "Pai de familia",
+  "localizacao": "Condado"
+}
+```
+* **Exemplo:**
+* ![alteração do personagem no id 1](./imagens/put_01.png)
+* * ![alteração do personagem no id 1](./imagens/put_02.png)
+
+### DELETE `/api/personagens/:id`
+* **Método:** `DELETE`
+* **URL:** `http://localhost:3000/api/personagens/:id`
+* **Resposta (204 No Content):** Sucesso sem corpo na resposta.
+* **Erro (404 Not Found):** Caso o ID informado não exista.
+* **Exemplo:**
+* ![delete do personagem](./imagens/delete_01.png)
+* ![delete do personagem](./imagens/delete_02.png)
+
 ## 3. Explicação de Validações Implementadas
-A API permite gerenciar os integrantes da Sociedade do Anel e outros personagens da franquia.
-1. Campos Obrigatórios: O servidor verifica se nome, raca e classe foram enviados no corpo da requisição. Caso algum campo esteja ausente, o sistema retorna Status 400 (Bad Request).
-2. Consistência do Nome: Foi implementada uma trava onde o campo nome deve possuir no mínimo 3 caracteres. Nomes menores são rejeitados.
-3. Localização Padrão (Default): Caso a localizacao não seja informada no JSON enviado, a API define automaticamente como "Terra-Média".
-4. Gerenciamento de Identificadores (ID): O servidor controla a geração de IDs de forma incremental (iniciando em 6 para novos recursos), garantindo que cada personagem tenha um ID único.
+Para garantir a integridade dos dados da Terra-Média, as seguintes regras foram aplicadas tanto no **POST** quanto no **PUT**:
+
+1. **Campos Obrigatórios:** O servidor valida se `nome`, `raca` e `classe` estão presentes. Caso falte algum, retorna **Status 400 (Bad Request)**.
+2. **Consistência do Nome:** O campo `nome` deve possuir no mínimo **3 caracteres**. Nomes menores são rejeitados para evitar registros inválidos.
+3. **Localização Padrão (Default):** Caso a `localizacao` não seja informada, a API define automaticamente como **"Terra-Média"**.
+4. **Gerenciamento de IDs:** O servidor controla a geração de IDs únicos de forma incremental, impedindo conflitos.
+5. **Verificação de Existência:** Nos métodos **PUT** e **DELETE**, a API verifica se o ID existe antes de processar. Caso não encontre, retorna **Status 404 (Not Found)**.
 
 ## ⚙️ Como Rodar o Projeto
 1. Clone este repositório.
