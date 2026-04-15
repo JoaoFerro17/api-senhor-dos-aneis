@@ -1,177 +1,81 @@
-# API da Terra-Média - O Senhor dos Anéis  
-**Projeto:** Trabalho 1 - Implementação de Endpoints e Validações  
+# API Terra-Média - Projeto Final
 
 ---
 
-##  1. Lista de Todos os Endpoints
-A API permite gerenciar os integrantes da Sociedade do Anel e outros personagens da franquia.
+## 1. Descrição do Projeto
+Esta API foi desenvolvida como projeto final para consolidar os conceitos de operações CRUD, persistência de dados relacional e manipulação de fluxos de dados (paginação e filtros). O tema escolhido foi a franquia **O Senhor dos Anéis**, gerenciando os heróis e vilões da Terra-Média.
 
-| Funcionalidade | Método | URL | Descrição |
-| :--- | :--- | :--- | :--- |
-| Boas-vindas | `GET` | `/` | Retorna uma mensagem inicial da API. |
-| Listar/Filtrar | `GET` | `/api/personagens` | Lista todos os personagens ou filtra por raça. |
-| Criar Novo | `POST` | `/api/personagens` | Adiciona um novo personagem com validações. |
+### Requisitos da Aula 08 Atendidos:
+* **Persistência Real:** Uso do SQLite3 para salvar dados em arquivo físico (`terra_media.db`).
+* **CRUD Completo:** Implementação de todas as rotas (GET, POST, PUT, DELETE).
+* **Busca Avançada:** Suporte a filtros por raça, ordenação alfabética e paginação de resultados.
+* **Mínimo de Registros:** O sistema inicia automaticamente com 20 registros para teste.
 
 ---
 
-##  2. Detalhamento dos Endpoints
+## 📡 2. Documentação dos Endpoints
 
-###  GET `/`
-* **Método:** `GET`
-* **URL:** `http://localhost:3000/`
-* **Resposta (200 OK):**
-```text
-Bem-vindo à API de Personagens da Terra Média!
-```
-![boas-vindas](./imagens/teste_boas_vindas.png)
+| Funcionalidade | Método | Endpoint | Parâmetros (Query) | Status Sucesso |
+| :--- | :--- | :--- | :--- | :--- |
+| **Listar/Filtrar** | `GET` | `/api/personagens` | `raca`, `ordem`, `pagina`, `limite` | `200 OK` |
+| **Criar Novo** | `POST` | `/api/personagens` | - | `201 Created` |
+| **Atualizar** | `PUT` | `/api/personagens/:id` | - | `200 OK` |
+| **Remover** | `DELETE` | `/api/personagens/:id` | - | `204 No Content` |
 
-###  GET `/`
-* **Método:** `GET`
-* **URL:** `http://localhost:3000/api/personagens`
-* **Resposta (200 OK):**
-```text
-[
-  { "id": 1, "nome": "Frodo Bolseiro", "raca": "Hobbit", "classe": "Portador do Anel", "localizacao": "Condado" },
-  { "id": 2, "nome": "Gandalf", "raca": "Mago", "classe": "Istari", "localizacao": "Variável" },
-  { "id": 3, "nome": "Aragorn", "raca": "Humano", "classe": "Guradião", "localizacao": "Valfenda" },
-  { "id": 4, "nome": "Legolas", "raca": "Elfo", "classe": "Arqueiro", "localizacao": "Floresta de Fangorn" },
-  {id: 5, nome: "Gimli", raca: "Anão", classe: "Guerreiro", localizacao: "Moria"}
-]
-```
-![listagem todos os  personagens](./imagens/listagem_geral.png)
+---
 
-###  POST `/api/personagens`
-* **Método:** `POST`
-* **URL:** `http://localhost:3000/api/personagens`
-* **Corpo da Requisição (Body JSON):**
-```json
-{
-  "nome": "Boromir",
-  "raca": "Humano",
-  "classe": "Guerreiro",
-  "localizacao": "Gondor"
-}
-```
-* **Resposta (201 Created):**
-```json
-{
-  "id": 6,
-  "nome": "Boromir",
-  "raca": "Humano",
-  "classe": "Guerreiro",
-  "localizacao": "Gondor"
-}
-```
-![boromir](./imagens/id_6.png)
+## 3. Recursos Implementados
 
-###  POST `/api/personagens`
-* **Método:** `POST`
-* **URL:** `http://localhost:3000/api/personagens`
-* **Corpo da Requisição (Body JSON):**
-```json
-{
-  "nome": "Galadriel",
-  "raca": "Elfo",
-  "classe": "Rainha",
-  "localizacao": "Lothlórien"
-}
-```
-* **Resposta (201 Created):**
-```json
-{
-  "id": 7,
-  "nome": "Galadriel",
-  "raca": "Elfo",
-  "classe": "Rainha",
-  "localizacao": "Lothlórien"
-}
-```
-![Galadriel](./imagens/id_7.png)
+### Listagem Inteligente (Filtros e Paginação)
+A rota `GET /api/personagens` aceita os seguintes parâmetros opcionais:
+* `raca`: Filtra por raça (ex: `?raca=Elfo`).
+* `ordem`: Define a ordem alfabética (`asc` ou `desc`).
+* `pagina` e `limite`: Controla a paginação (ex: `?pagina=2&limite=5`).
 
-###  POST `/api/personagens`
-* **Método:** `POST`
-* **URL:** `http://localhost:3000/api/personagens`
-* **Corpo da Requisição (Body JSON):**
-```json
-{
-  "nome": "Saruman",
-  "raca": "Istari",
-  "classe": "Mago",
-  "localizacao": "dois palmos debaixo da terra"
-}
-```
-* **Resposta (201 Created):**
-```json
-{
-  "id": 8,
-  "nome": "Saruman",
-  "raca": "Istari",
-  "classe": "Mago",
-  "localizacao": "dois palmos debaixo da terra"
-}
-```
-![Saruman](./imagens/id_8.png)
+### Validações Robustas
+* Verificação de campos obrigatórios no **POST** e **PUT**.
+* Verificação de comprimento mínimo para o nome (mín. 3 caracteres).
+* Tratamento de **ID inexistente (404)** em rotas de atualização e exclusão.
 
-###  POST `/api/personagens`
-* **Método:** `POST`
-* **URL:** `http://localhost:3000/api/personagens`
-* **Corpo da Requisição (Body JSON):**
-```json
-{
-  "nome": "Gollum",
-  "raca": "Hobbit",
-  "classe": "?????",
-  "localizacao": "🔥🔥🔥🔥🔥"
-}
-```
-* **Resposta (201 Created):**
-```json
-{
-  "id": 9,
-  "nome": "Gollum",
-  "raca": "Hobbit",
-  "classe": "?????",
-  "localizacao": "🔥🔥🔥🔥🔥"
-}
-```
-![Gollum](./imagens/id_9.png)
+### Persistência com SQLite
+Diferente de versões anteriores, os dados agora são persistentes. Mesmo que o servidor seja reiniciado, as alterações feitas via POST, PUT ou DELETE permanecem salvas no arquivo de banco de dados.
 
-###  POST `/api/personagens`
-* **Método:** `POST`
-* **URL:** `http://localhost:3000/api/personagens`
-* **Corpo da Requisição (Body JSON):**
-```text
-{
-  "nome": "Sam",
-  "raca": "Hobbit",
-  "classe": "Pai de familia",
-  "localizacao": "Condado"
-}
-```
-* **Resposta (201 Created):**
-```json
-{
-  "id": 10,
-  "nome": "Sam",
-  "raca": "Hobbit",
-  "classe": "Pai de familia",
-  "localizacao": "Condado"
-}
-```
-![Sam](./imagens/id_10.png)
+---
+
+## 4. Tabela de Status Codes
+
+| Código | Descrição | Uso na API |
+| :--- | :--- | :--- |
+| **200 OK** | Sucesso | Retorno de listagem ou atualização. |
+| **201 Created** | Criado | Sucesso ao inserir novo personagem. |
+| **204 No Content** | Sem Conteúdo | Sucesso ao deletar (sem corpo de resposta). |
+| **400 Bad Request** | Erro do Cliente | Falha em validações de campos obrigatórios. |
+| **404 Not Found** | Não Encontrado | ID informado não existe no banco de dados. |
+| **500 Internal Error** | Erro de Banco | Falha na conexão ou execução do SQLite. |
+
+---
+
+## 5. Como Executar
+
+1.  **Instalar dependências:**
+    ```bash
+    npm install
+    ```
+2.  **Iniciar o projeto (Modo Dev):**
+    ```bash
+    npm run dev
+    ```
+    *O banco `terra_media.db` será criado e populado automaticamente na primeira execução.*
+
+---
+
+## 6. Evidências de Teste (Postman)
+
+### Listagem com Paginação (IDs 1 a 20)
+![Listagem](./imagens/listagem_geral_2.png)
+
+### Cadastro de Personagem (POST)
+![Cadastro](./imagens/id_6.png)
 
 ### Filtro por Raça
-![filtro por raça](./imagens/filtro_por_raca.png)
-
-## 3. Explicação de Validações Implementadas
-A API permite gerenciar os integrantes da Sociedade do Anel e outros personagens da franquia.
-1. Campos Obrigatórios: O servidor verifica se nome, raca e classe foram enviados no corpo da requisição. Caso algum campo esteja ausente, o sistema retorna Status 400 (Bad Request).
-2. Consistência do Nome: Foi implementada uma trava onde o campo nome deve possuir no mínimo 3 caracteres. Nomes menores são rejeitados.
-3. Localização Padrão (Default): Caso a localizacao não seja informada no JSON enviado, a API define automaticamente como "Terra-Média".
-4. Gerenciamento de Identificadores (ID): O servidor controla a geração de IDs de forma incremental (iniciando em 6 para novos recursos), garantindo que cada personagem tenha um ID único.
-
-## ⚙️ Como Rodar o Projeto
-1. Clone este repositório.
-2. No terminal, execute `npm install` para baixar as dependências.
-3. Inicie o servidor com `npm run dev`.
-4. A API estará disponível em: `http://localhost:3000`
+![Filtro](./imagens/filtro_por_raca.png)

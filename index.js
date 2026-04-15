@@ -4,92 +4,119 @@ const PORT = 3000;
 
 app.use(express.json());
 
-let personagens = [
-    { id: 1, nome: "Frodo Bolseiro", raca: "Hobbit", classe: "Portador do Anel", localizacao: "Condado" },
-    { id: 2, nome: "Gandalf", raca: "Mago", classe: "Istari", localizacao: "Variável" },
-    { id: 3, nome: "Aragorn", raca: "Humano", classe: "Guardião", localizacao: "Valfenda" },
-    { id: 4, nome: "Legolas", raca: "Elfo", classe: "Arqueiro", localizacao: "Floresta de Fangorn" },
-    { id: 5, nome: "Gimli", raca: "Anão", classe: "Guerreiro", localizacao: "Moria" }
-];
-
-let proximoId = 6;
-
-app.get('/', (req, res) => {
-    res.send('Bem-vindo à API de Personagens da Terra Média!');
-});
+const db = require('./database');
 
 app.get('/api/personagens', (req, res) => {
-    const{raca} = req.query;
-    let resultado = personagens;
+    let { raca, ordem, limite = 10, pagina = 1 } = req.query;
+    
+    limite = parseInt(limite);
+    const offset = (parseInt(pagina) - 1) * limite;
+
+    let sql = "SELECT * FROM personagens WHERE 1=1";
+    let params = [];
+
     if (raca) {
-        resultado = resultado.filter(p => p.raca.toLowerCase() === raca.toLowerCase());
+        sql += " AND raca LIKE ?";
+        params.push(`%${raca}%`);
     }
-    res.json(resultado);
+
+    if (ordem && ordem.toLowerCase() === 'desc') {
+        sql += " ORDER BY nome DESC";
+    } else {
+        sql += " ORDER BY nome ASC";
+    }
+
+    sql += " LIMIT ? OFFSET ?";
+    params.push(limite, offset);
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            return res.status(500).json({ erro: "Erro ao consultar o reino: " + err.message });
+        }
+        
+        res.json({
+            pagina_atual: parseInt(pagina),
+            limite_por_pagina: limite,
+            dados: rows
+        });
+    });
 });
 
 app.post('/api/personagens', (req, res) => {
-    const { nome, raca, classe, localizacao = "Terra-Média" } = req.body;
-    if (!nome || !raca || !classe) {
-        return res.status(400).json({ 
-            erro: "Campos obrigatórios faltando.", 
-            detalhes: "Envie nome, raca e classe." 
-        });
-    }
-    if(nome.length < 3) {
-        return res.status(400).json({ erro: "O nome é muito curto para ser lembrado nas canções." });
-    }
-    const novoPersonagem = {
-        id: proximoId++,
-        nome,
-        raca,
-        classe,
-        localizacao
-    };
-    personagens.push(novoPersonagem);
-    res.status(201).json(novoPersonagem);
-});
-
-app.put('/api/personagens/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const personagem = personagens.find(p => p.id === id);
-
-    if (!personagem) {
-        return res.status(404).json({ erro: "⚔️ Personagem não encontrado no reino." });
-    }
-
     const { nome, raca, classe, localizacao } = req.body;
 
     if (!nome || !raca || !classe) {
         return res.status(400).json({ 
-            erro: "Campos obrigatórios faltando.", 
-            detalhes: "Envie nome, raca e classe para atualização completa." 
+            erro: "Campos obrigatórios: nome, raca e classe." 
         });
     }
 
     if (nome.length < 3) {
-        return res.status(400).json({ erro: "O nome é muito curto para os registrar." });
+        return res.status(400).json({ 
+            erro: "O nome deve ter pelo menos 3 caracteres." 
+        });
     }
 
-    personagem.nome = nome;
-    personagem.raca = raca;
-    personagem.classe = classe;
-    personagem.localizacao = localizacao || "Terra-Média";
+    const sql = `INSERT INTO personagens (nome, raca, classe, localizacao) VALUES (?, ?, ?, ?)`;
+    
+    const valores = [nome, raca, classe, localizacao || 'Terra-Média'];
 
-    res.json(personagem);
+    db.run(sql, valores, function(err) {
+        if (err) {
+            return res.status(500).json({ 
+                erro: "Erro ao inserir no banco: " + err.message 
+            });
+        }
+        res.status(201).json({
+            id: this.lastID,
+            nome,
+            raca,
+            classe,
+            localizacao: localizacao || 'Terra-Média'
+        });
+    });
+});
+
+app.put('/api/personagens/:id', (req, res) => {
+    const id = req.params.id;
+    const { nome, raca, classe, localizacao } = req.body;
+
+    if (!nome || !raca || !classe) {
+        return res.status(400).json({ erro: "Campos obrigatórios: nome, raca e classe." });
+    }
+
+    const sql = `UPDATE personagens SET nome = ?, raca = ?, classe = ?, localizacao = ? WHERE id = ?`;
+    const valores = [nome, raca, classe, localizacao || 'Terra-Média', id];
+
+    db.run(sql, valores, function(err) {
+        if (err) {
+            return res.status(500).json({ erro: "Erro ao atualizar: " + err.message });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({ erro: "Personagem não encontrado para atualização." });
+        }
+
+        res.json({ id, nome, raca, classe, localizacao });
+    });
 });
 
 app.delete('/api/personagens/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    
-    const indice = personagens.findIndex(p => p.id === id);
+    const id = req.params.id;
+    const sql = `DELETE FROM personagens WHERE id = ?`;
 
-    if (indice === -1) {
-        return res.status(404).json({ erro: "⚔️ Impossível deletar: personagem não encontrado." });
-    }
+    db.run(sql, [id], function(err) {
+        if (err) {
+            return res.status(500).json({ erro: "Erro ao deletar: " + err.message });
+        }
 
-    personagens.splice(indice, 1);
-
-    res.status(204).send();
+        if (this.changes === 0) {
+            return res.status(404).json({ erro: "Personagem não encontrado para remoção." });
+        }
+        res.status(204).send();
+    });
 });
-
-app.listen(PORT, () => console.log(`🚀 Middle-earth API running on port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+    console.log(`📜 Documentação da API disponível no README.md`);
+});
